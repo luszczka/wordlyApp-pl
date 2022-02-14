@@ -1,0 +1,70 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    width: 100%;
+}
+
+:root {
+    --grey-tone-1: #f2f2f2;
+    --grey-tone-2: #d7dadc;
+    --grey-tone-3: #4a4a4a;
+    --grey-tone-4: #3a3a3c;
+    --grey-tone-5: #272729;
+    --grey-tone-6: #1a1a1b;
+}
+
+body {
+    background-color: var(--grey-tone-3);
+}
+
+button {
+    all: unset;
+}
+
+.container {
+    width: 90vw;
+    margin: 10em auto;
+    display: flex;
+    flex-direction: column;
+
+    .guess-container {
+        margin-bottom: 10em;
+        .guess-row {
+            display: flex;
+            justify-content: center;
+            .guess-element {
+                margin: .2em;
+                padding: 2.5em;
+                background-color: transparent;
+                border: 3px solid var(--grey-tone-4);
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+
+    .keyboard {
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            button {
+                margin: .2em;
+                padding: 1em;
+                font-size: 2em;
+                background-color: var(--grey-tone-1);
+                border-radius: .5em;
+                box-shadow: 9px 10px 9px -10px rgba(0, 0, 0, 1);
+                cursor: pointer;
+
+                &:active {
+                    box-shadow: inset 8px 8px 9px -10px rgba(0, 0, 0, 1);
+                    background-color: var(--grey-tone-2);
+                }
+            }
+        }
+    }
+}
