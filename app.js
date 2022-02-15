@@ -1,4 +1,4 @@
-const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'q', 'u', 'w', 'x', 'y', 'z']
+const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'q', 'u', 'w', 'v', 'x', 'y', 'z']
 const words = ['afekt', 'afera', 'agawa', 'akord', 'alert', 'aktor', 'alkus', 'amant', ' ameba', 'amper', 'aorta', 'armia', 'audyt', 'awizo', 'awers']
 const TILE_CONTAINER_CLASS = "guess-container";
 const TILE_ROW_CLASS = "guess-row";
@@ -18,10 +18,11 @@ class Game{
     keyboardListener() {
         document.addEventListener('keydown', (keyPressed) => {
             if (keyPressed.key == "Backspace") {this.backspaceTypedLetter()};
+            if (keyPressed.key == "Enter") {this.checkIfAllTilesInRow()};
             if (letters.indexOf(keyPressed.key) < 0) {
                 return;
             }
-            this.typedLetter = keyPressed.key; // filtrować i wyciągnąć z interakcji znaki niepotrzebne
+            this.typedLetter = keyPressed.key;
             this.passTypedLetterToTile();
         });
     }
@@ -29,9 +30,8 @@ class Game{
     clickedLetter() {
         let letters = document.querySelectorAll(`button[data-key]`);
         for (let i = 0; i < letters.length; i++) {
-            letters[i].addEventListener("click", function() {
+            letters[i].addEventListener("click",  () => {
                 this.typedLetter = letters[i].dataset.key;
-                console.log(this.typedLetter);
                 this.passTypedLetterToTile();
             });
         }
@@ -40,22 +40,35 @@ class Game{
     passTypedLetterToTile() {
         for (let j = 0; j < this.lettersLimit; j++) {
             if (this.currentRow.children[j].attributes.letter.value == "") {
+                this.passTypedLettersToTileRow();
                 this.currentRow.children[j].attributes.letter.value = `${this.typedLetter}`
                 this.currentRow.children[j].innerHTML = `${this.typedLetter}`;
-                console.log(this.currentRow.children[j].attributes.letter.value);
                 break;
             }
         }
     }
 
+    passTypedLettersToTileRow() {
+        let currentlyPassedLetters = this.currentRow.attributes.letters.value;
+        this.currentRow.attributes.letters.value = `${currentlyPassedLetters}${this.typedLetter}`;
+    }
+
     backspaceTypedLetter() {
         for (let j = this.lettersLimit - 1; j >= 0; j--) {
             if (!this.currentRow.children[j].attributes.letter.value == "") {
+                this.currentRow.attributes.letters.textContent = `${this.currentRow.attributes.letters.textContent.slice(0, -1)}`;
                 this.currentRow.children[j].attributes.letter.value = ``
                 this.currentRow.children[j].innerHTML = ``;
                 break;
             }
         }
+    }
+
+    checkIfAllTilesInRow() {      
+        if (this.currentRow.children[0].attributes.letter.value == "" || this.currentRow.children[1].attributes.letter.value == "" || this.currentRow.children[2].attributes.letter.value == "" || this.currentRow.children[3].attributes.letter.value == "" || this.currentRow.children[4].attributes.letter.value == "") {
+            return;
+        }
+        console.log("enter"); 
     }
 
     showWordToGuess() {
