@@ -15,6 +15,8 @@
     --grey-tone-4: #3a3a3c;
     --grey-tone-5: #272729;
     --grey-tone-6: #1a1a1b;
+    --orange: #ffa07a;
+    --green: #3cb371;
 }
 
 body {
@@ -36,13 +38,27 @@ button {
         .guess-row {
             display: flex;
             justify-content: center;
-            .guess-element {
-                margin: .2em;
-                padding: 2.5em;
+            .guess-tile {
+                margin: .1em;
+                padding: 1em;
                 background-color: transparent;
                 border: 3px solid var(--grey-tone-4);
-                width: 30px;
-                height: 30px;
+                max-width: 30px;
+                max-height: 30px;
+                font-size: 3em;
+                color: var(--grey-tone-1);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-transform: uppercase;
+
+                .in-word {
+                    background-color: var(--orange);
+                }
+
+                .match {
+                    background-color: var(--green);
+                }
             }
         }
     }
