@@ -16,6 +16,8 @@
   --grey-tone-4: #3a3a3c;
   --grey-tone-5: #272729;
   --grey-tone-6: #1a1a1b;
+  --orange: #ffa07a;
+  --green: #3cb371;
 }
 
 body {
@@ -51,13 +53,33 @@ button {
           justify-content: center;
 }
 
-.container .guess-container .guess-row .guess-element {
-  margin: .2em;
-  padding: 2.5em;
+.container .guess-container .guess-row .guess-tile {
+  margin: .1em;
+  padding: 1em;
   background-color: transparent;
   border: 3px solid var(--grey-tone-4);
-  width: 30px;
-  height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  font-size: 3em;
+  color: var(--grey-tone-1);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-transform: uppercase;
+}
+
+.container .guess-container .guess-row .guess-tile .in-word {
+  background-color: var(--orange);
+}
+
+.container .guess-container .guess-row .guess-tile .match {
+  background-color: var(--green);
 }
 
 .container .keyboard .keyboard-row {
