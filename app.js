@@ -1,8 +1,9 @@
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'q', 'u', 'w', 'v', 'x', 'y', 'z']
-const words = ['afekt', 'afera', 'agawa', 'akord', 'alert', 'aktor', 'alkus', 'amant', ' ameba', 'amper', 'aorta', 'armia', 'audyt', 'awizo', 'awers']
+const words = ['afekt', 'afera', 'agawa', 'akord', 'alert', 'aktor', 'alkus', 'amant', 'ameba', 'amper', 'aorta', 'armia', 'audyt', 'awizo', 'awers']
 const TILE_CONTAINER_CLASS = "guess-container";
 const TILE_ROW_CLASS = "guess-row";
 const TILE_CLASS = "guess-tile";
+const REFRESH_CLASS = "refresh";
 
 class Game{
     constructor() {
@@ -28,17 +29,25 @@ class Game{
     }
 
     clickedLetter() {
-        let letters = document.querySelectorAll(`button[data-key]`);
-        for (let i = 0; i < letters.length; i++) {
-            letters[i].addEventListener("click",  () => {
-                this.typedLetter = letters[i].dataset.key;
+        let keys = document.querySelectorAll(`button[data-key]`);
+        let backspaceButton = document.querySelector(`button[data-action="backspace"]`);
+        let submitButton = document.querySelector(`button[data-action="submit"]`);
+        for (let i = 0; i < keys.length; i++) {
+            keys[i].addEventListener("click",  () => {
+                this.typedLetter = keys[i].dataset.key;
                 this.passTypedLetterToTile();
             });
         }
+        backspaceButton.addEventListener("click",  () => {
+            this.backspaceTypedLetter();
+        });
+        submitButton.addEventListener("click",  () => {
+            this.checkIfAllTilesInRow();
+        });
     }
 
     passTypedLetterToTile() {
-        for (let j = 0; j < this.lettersLimit; j++) {
+        for (let j = 0; j < this.lettersLimit; j++) { // console log values here to check the nextRound issue
             if (this.currentRow.children[j].attributes.letter.value == "") {
                 this.passTypedLettersToTileRow();
                 this.currentRow.children[j].attributes.letter.value = `${this.typedLetter}`
@@ -65,10 +74,59 @@ class Game{
     }
 
     checkIfAllTilesInRow() {      
-        if (this.currentRow.children[0].attributes.letter.value == "" || this.currentRow.children[1].attributes.letter.value == "" || this.currentRow.children[2].attributes.letter.value == "" || this.currentRow.children[3].attributes.letter.value == "" || this.currentRow.children[4].attributes.letter.value == "") {
+        if (this.currentRow.attributes.letters.value.length < 5) {
             return;
         }
-        console.log("enter"); 
+        if (words.indexOf(this.currentRow.attributes.letters.value) < 0) {
+            alert("nie mamy tego słowa w bazie!");
+            return;
+        }
+        if (this.currentRow.attributes.letters.value == this.wordToGuess) {
+            this.letterMatch();
+            setTimeout(() => {this.youWin()}, 300);
+            return;
+            
+        }
+        console.log("word in words but not match");
+        this.letterMatch();
+        this.letterAlmostMatch();
+        this.nextRound();
+    }
+
+    letterMatch() {
+        for (let k = 0; k < this.lettersLimit; k++) {
+            if (this.currentRow.attributes.letters.value[k] == this.wordToGuess[k]) {
+                console.log(this.currentRow.attributes.letters.value[k]);
+                if (this.currentRow.children[k].attributes.letter.value == this.wordToGuess[k]) {
+                    this.currentRow.children[k].classList.add("match");
+                } 
+            }
+        }
+    }
+
+    letterAlmostMatch() {
+        for (let k = 0; k < this.lettersLimit; k++) {
+            if (this.wordToGuess.includes(`${this.currentRow.children[k].attributes.letter.value}`)) {
+                if (this.currentRow.children[k].classList.contains("match") || this.currentRow.children[k].classList.contains("in-word")) {
+                    console.log("juz zielona lub pomaranczowa"); // orange display issue - to be fixed (count same letters and compare to its amount in word)
+                } else{
+                    this.currentRow.children[k].classList.add("in-word"); 
+                }
+            } 
+        }
+    }
+
+    nextRound() {
+        this.currentRound++;
+    }
+
+    youWin() {
+        alert("Correct!");
+        const refreshButton = document.querySelector(`.${REFRESH_CLASS}`);
+        refreshButton.classList.add("display");
+        refreshButton.addEventListener("click",  () => {
+            location.reload();
+        });
     }
 
     showWordToGuess() {

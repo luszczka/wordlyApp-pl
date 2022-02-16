@@ -21,6 +21,7 @@
 
 body {
     background-color: var(--grey-tone-3);
+    user-select: none;
 }
 
 button {
@@ -32,6 +33,24 @@ button {
     margin: 10em auto;
     display: flex;
     flex-direction: column;
+
+    .refresh {
+        position: absolute;
+        font-size: 5em;
+        text-align: center;
+        right: 30px;
+        width: 70px;
+        height: 70px;
+        background-color: var(--orange);
+        color: var(--grey-tone-1);
+        border: 3px solid var(--grey-tone-4);
+        display: none;
+        cursor: pointer;
+    }
+
+    .display {
+        display: block;
+    }
 
     .guess-container {
         margin-bottom: 10em;
@@ -52,11 +71,11 @@ button {
                 align-items: center;
                 text-transform: uppercase;
 
-                .in-word {
+                &.in-word {
                     background-color: var(--orange);
                 }
 
-                .match {
+                &.match {
                     background-color: var(--green);
                 }
             }

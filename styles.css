@@ -22,6 +22,10 @@
 
 body {
   background-color: var(--grey-tone-3);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 button {
@@ -38,6 +42,24 @@ button {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+}
+
+.container .refresh {
+  position: absolute;
+  font-size: 5em;
+  text-align: center;
+  right: 30px;
+  width: 70px;
+  height: 70px;
+  background-color: var(--orange);
+  color: var(--grey-tone-1);
+  border: 3px solid var(--grey-tone-4);
+  display: none;
+  cursor: pointer;
+}
+
+.container .display {
+  display: block;
 }
 
 .container .guess-container {
@@ -74,11 +96,11 @@ button {
   text-transform: uppercase;
 }
 
-.container .guess-container .guess-row .guess-tile .in-word {
+.container .guess-container .guess-row .guess-tile.in-word {
   background-color: var(--orange);
 }
 
-.container .guess-container .guess-row .guess-tile .match {
+.container .guess-container .guess-row .guess-tile.match {
   background-color: var(--green);
 }
 
