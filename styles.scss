@@ -11,6 +11,7 @@
 :root {
     --grey-tone-1: #f2f2f2;
     --grey-tone-2: #d7dadc;
+    --grey-tone-2-5: #adadad;
     --grey-tone-3: #4a4a4a;
     --grey-tone-4: #3a3a3c;
     --grey-tone-5: #272729;
@@ -26,6 +27,13 @@ body {
 
 button {
     all: unset;
+}
+
+@keyframes popping {   
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(-10deg); }
+    60% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
 }
 
 .container {
@@ -70,13 +78,20 @@ button {
                 justify-content: center;
                 align-items: center;
                 text-transform: uppercase;
+                transition: all .4s;
+
+                &.guessing {
+                    background-color: var(--grey-tone-4);
+                }
 
                 &.in-word {
                     background-color: var(--orange);
+                    border: 3px solid var(--orange);
                 }
 
                 &.match {
                     background-color: var(--green);
+                    border: 3px solid var(--green);
                 }
             }
         }

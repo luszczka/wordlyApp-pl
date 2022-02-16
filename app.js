@@ -1,5 +1,5 @@
-const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'q', 'u', 'w', 'v', 'x', 'y', 'z']
-const words = ['afekt', 'afera', 'agawa', 'akord', 'alert', 'aktor', 'alkus', 'amant', 'ameba', 'amper', 'aorta', 'armia', 'audyt', 'awizo', 'awers']
+const letters = ['a', 'ą', 'b', 'c', 'ć', 'd', 'e', 'ę', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'ł', 'm', 'n', 'ń', 'o', 'ó', 'p', 'r', 's', 'ś', 't', 'q', 'u', 'w', 'v', 'x', 'y', 'z', 'ź', 'ż']
+const words = ['afekt', 'afera', 'agawa', 'ajent', 'akcja', 'akord', 'akryl', 'alert', 'aloes', 'aktor', 'album', 'aleja', 'alkus', 'amant', 'ameba', 'amisz', 'amper', 'angaż', 'anime', 'aneks', 'antyk', 'aorta', 'areał', 'armia', 'astma', 'astra', 'atest', 'atuty', 'audyt', 'awizo', 'awers', "azoty", 'ażury']
 const TILE_CONTAINER_CLASS = "guess-container";
 const TILE_ROW_CLASS = "guess-row";
 const TILE_CLASS = "guess-tile";
@@ -14,10 +14,15 @@ class Game{
         this.roundsLimit = 6;
         this.typedLetter;
         this.currentRow = this.allRows[this.currentRound-1];
+        this.gameWon = false;
     }
 
-    keyboardListener() {
+    keyboardListener() {        
         document.addEventListener('keydown', (keyPressed) => {
+            if (this.gameWon === true) {
+                if (keyPressed.key == "Enter") {location.reload()}
+                return;
+            }
             if (keyPressed.key == "Backspace") {this.backspaceTypedLetter()};
             if (keyPressed.key == "Enter") {this.checkIfAllTilesInRow()};
             if (letters.indexOf(keyPressed.key) < 0) {
@@ -39,17 +44,26 @@ class Game{
             });
         }
         backspaceButton.addEventListener("click",  () => {
+            if (this.gameWon === true) {
+                return;
+            }
             this.backspaceTypedLetter();
         });
+    
         submitButton.addEventListener("click",  () => {
+            if (this.gameWon === true) {
+                location.reload();
+                return;
+            }
             this.checkIfAllTilesInRow();
         });
     }
 
     passTypedLetterToTile() {
-        for (let j = 0; j < this.lettersLimit; j++) { // console log values here to check the nextRound issue
+        for (let j = 0; j < this.lettersLimit; j++) {
             if (this.currentRow.children[j].attributes.letter.value == "") {
                 this.passTypedLettersToTileRow();
+                this.currentRow.children[j].classList.add("guessing");
                 this.currentRow.children[j].attributes.letter.value = `${this.typedLetter}`
                 this.currentRow.children[j].innerHTML = `${this.typedLetter}`;
                 break;
@@ -65,6 +79,7 @@ class Game{
     backspaceTypedLetter() {
         for (let j = this.lettersLimit - 1; j >= 0; j--) {
             if (!this.currentRow.children[j].attributes.letter.value == "") {
+                this.currentRow.children[j].classList.remove("guessing");
                 this.currentRow.attributes.letters.textContent = `${this.currentRow.attributes.letters.textContent.slice(0, -1)}`;
                 this.currentRow.children[j].attributes.letter.value = ``
                 this.currentRow.children[j].innerHTML = ``;
@@ -73,7 +88,13 @@ class Game{
         }
     }
 
-    checkIfAllTilesInRow() {      
+    checkIfAllTilesInRow() {  
+        for (let k = 0; k < this.lettersLimit; k++) {
+            this.currentRow.children[k].style.animation = "popping .5s" 
+            setTimeout(() => {
+                this.currentRow.children[k].style = ""
+            }, 500);
+        }
         if (this.currentRow.attributes.letters.value.length < 5) {
             return;
         }
@@ -87,7 +108,6 @@ class Game{
             return;
             
         }
-        console.log("word in words but not match");
         this.letterMatch();
         this.letterAlmostMatch();
         this.nextRound();
@@ -96,7 +116,6 @@ class Game{
     letterMatch() {
         for (let k = 0; k < this.lettersLimit; k++) {
             if (this.currentRow.attributes.letters.value[k] == this.wordToGuess[k]) {
-                console.log(this.currentRow.attributes.letters.value[k]);
                 if (this.currentRow.children[k].attributes.letter.value == this.wordToGuess[k]) {
                     this.currentRow.children[k].classList.add("match");
                 } 
@@ -108,7 +127,7 @@ class Game{
         for (let k = 0; k < this.lettersLimit; k++) {
             if (this.wordToGuess.includes(`${this.currentRow.children[k].attributes.letter.value}`)) {
                 if (this.currentRow.children[k].classList.contains("match") || this.currentRow.children[k].classList.contains("in-word")) {
-                    console.log("juz zielona lub pomaranczowa"); // orange display issue - to be fixed (count same letters and compare to its amount in word)
+                    console.log("already green or orange"); // orange display issue - to be fixed (count same letters and compare to its amount in word)
                 } else{
                     this.currentRow.children[k].classList.add("in-word"); 
                 }
@@ -118,10 +137,25 @@ class Game{
 
     nextRound() {
         this.currentRound++;
+        this.currentRow = this.allRows[this.currentRound-1];
+        if (this.currentRound > this.roundsLimit) {
+            this.youLost();
+        }
     }
 
     youWin() {
+        this.gameWon = true;
         alert("Correct!");
+        this.gameFinishedActions();
+    }
+
+    youLost() {
+        this.gameWon = true;
+        alert("You lost!");
+        this.gameFinishedActions();
+    }
+
+    gameFinishedActions() {
         const refreshButton = document.querySelector(`.${REFRESH_CLASS}`);
         refreshButton.classList.add("display");
         refreshButton.addEventListener("click",  () => {
@@ -142,3 +176,5 @@ class Game{
 
 const newGame = new Game();
 newGame.runGame();
+// game is key sensitive - only small letters alowed
+// orange color is not working correctly 
