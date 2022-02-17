@@ -39,6 +39,9 @@ class Game{
         let submitButton = document.querySelector(`button[data-action="submit"]`);
         for (let i = 0; i < keys.length; i++) {
             keys[i].addEventListener("click",  () => {
+                if (this.gameWon === true) {
+                    return;
+                }
                 this.typedLetter = keys[i].dataset.key;
                 this.passTypedLetterToTile();
             });
@@ -60,6 +63,9 @@ class Game{
     }
 
     passTypedLetterToTile() {
+        if (this.gameWon === true) {
+            return;
+        }
         for (let j = 0; j < this.lettersLimit; j++) {
             if (this.currentRow.children[j].attributes.letter.value == "") {
                 this.passTypedLettersToTileRow();
@@ -89,17 +95,17 @@ class Game{
     }
 
     checkIfAllTilesInRow() {  
-        for (let k = 0; k < this.lettersLimit; k++) {
-            this.currentRow.children[k].style.animation = "popping .5s" 
-            setTimeout(() => {
-                this.currentRow.children[k].style = ""
-            }, 500);
+        if (this.gameWon === true) {
+            return;
         }
+        this.setAnimation(this.currentRow.children, 'popping', '.5s')
         if (this.currentRow.attributes.letters.value.length < 5) {
+            this.setAnimation(this.currentRow.children, 'colorChange', '.3s')
             return;
         }
         if (words.indexOf(this.currentRow.attributes.letters.value) < 0) {
-            alert("nie mamy tego słowa w bazie!");
+            this.setAnimation(this.currentRow.children, 'colorChange', '.3s')
+            // alert("nie mamy tego słowa w bazie!");
             return;
         }
         if (this.currentRow.attributes.letters.value == this.wordToGuess) {
@@ -111,6 +117,19 @@ class Game{
         this.letterMatch();
         this.letterAlmostMatch();
         this.nextRound();
+    }
+
+    setAnimation(element, animationName, durance) {
+        for (let k = 0; k < this.lettersLimit; k++) {
+            element[k].style.animation = `${animationName} ${durance}`;  
+            this.clearAnimation(k);
+        }
+    }
+
+    clearAnimation(k) { 
+        setTimeout(() => {
+            this.currentRow.children[k].style = "" // throws error after a game
+        }, 500);
     }
 
     letterMatch() {
@@ -139,25 +158,23 @@ class Game{
         this.currentRound++;
         this.currentRow = this.allRows[this.currentRound-1];
         if (this.currentRound > this.roundsLimit) {
-            this.youLost();
+            setTimeout(() => {this.youLost()}, 300);
+            return;
         }
     }
 
     youWin() {
         this.gameWon = true;
         alert("Correct!");
-        this.gameFinishedActions();
     }
 
     youLost() {
         this.gameWon = true;
         alert("You lost!");
-        this.gameFinishedActions();
     }
 
-    gameFinishedActions() {
+    restartGame() {
         const refreshButton = document.querySelector(`.${REFRESH_CLASS}`);
-        refreshButton.classList.add("display");
         refreshButton.addEventListener("click",  () => {
             location.reload();
         });
@@ -170,6 +187,7 @@ class Game{
     runGame() {
         this.keyboardListener();
         this.clickedLetter();
+        this.restartGame();
         this.showWordToGuess();
     }
 }

@@ -18,6 +18,7 @@
     --grey-tone-6: #1a1a1b;
     --orange: #ffa07a;
     --green: #3cb371;
+    --red: #d45858;
 }
 
 body {
@@ -36,9 +37,16 @@ button {
     100% { transform: rotate(0deg); }
 }
 
+@keyframes colorChange {   
+    0% { background-color: var(--grey-tone-4); }
+    30% { background-color: var(--red); }
+    70% { background-color: var(--red); }
+    100% { background-color: var(--grey-tone-4); }
+}
+
 .container {
     width: 90vw;
-    margin: 10em auto;
+    margin: 5em auto;
     display: flex;
     flex-direction: column;
 
@@ -52,8 +60,12 @@ button {
         background-color: var(--orange);
         color: var(--grey-tone-1);
         border: 3px solid var(--grey-tone-4);
-        display: none;
+        // display: none;
         cursor: pointer;
+
+        &:hover {
+            animation: popping .5s;
+        }
     }
 
     .display {
