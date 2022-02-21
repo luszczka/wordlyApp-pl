@@ -103,9 +103,10 @@ class Game{
             this.setAnimation(this.currentRow.children, 'colorChange', '.3s')
             return;
         }
+        // fix na pomaranczowe pola --> zamienic całe wpisane slowo na arrayke i kolejno wyrzucać litery przy sprawdzaniu
         if (words.indexOf(this.currentRow.attributes.letters.value) < 0) {
             this.setAnimation(this.currentRow.children, 'colorChange', '.3s')
-            // alert("nie mamy tego słowa w bazie!");
+            alert("nie mamy tego słowa w bazie!");
             return;
         }
         if (this.currentRow.attributes.letters.value == this.wordToGuess) {
@@ -121,14 +122,17 @@ class Game{
 
     setAnimation(element, animationName, durance) {
         for (let k = 0; k < this.lettersLimit; k++) {
-            element[k].style.animation = `${animationName} ${durance}`;  
+            element[k].style.animation = `${animationName} ${durance}`;
             this.clearAnimation(k);
         }
     }
 
     clearAnimation(k) { 
         setTimeout(() => {
-            this.currentRow.children[k].style = "" // throws error after a game
+            if (this.gameWon === true) {
+                return;
+            }
+            this.currentRow.children[k].style = "";
         }, 500);
     }
 
@@ -146,12 +150,30 @@ class Game{
         for (let k = 0; k < this.lettersLimit; k++) {
             if (this.wordToGuess.includes(`${this.currentRow.children[k].attributes.letter.value}`)) {
                 if (this.currentRow.children[k].classList.contains("match") || this.currentRow.children[k].classList.contains("in-word")) {
-                    console.log("already green or orange"); // orange display issue - to be fixed (count same letters and compare to its amount in word)
+                    console.log("already green or orange");
                 } else{
                     this.currentRow.children[k].classList.add("in-word"); 
                 }
             } 
         }
+    }
+
+    // letterAlmostMatch() {
+    //     let wordToArray = Array.from(this.currentRow.attributes.letters.value);
+    //     let wordToGuessToArray = Array.from(this.wordToGuess);
+        // for (let k = 0; k < this.lettersLimit; k++) {
+        //     let found = wordToArray.some(letterMatch => wordToGuessToArray[k].includes(letterMatch));
+        //     if (found) {this.currentRow.children[k].classList.add("in-word"); console.log(this.currentRow.children[k]);console.log("true")}
+        //     wordToArray.shift();
+        // }
+        // for (let k = 0; k < this.lettersLimit; k++) {
+        //     if (wordToArray[k] === wordToGuessToArray){
+        //         console.log(this.currentRow.children[k]);
+        //         console.log("aaa");
+        //     }
+        //     wordToArray.shift();
+        // }
+        // console.log(wordToGuessToArray.some(item => wordToArray.includes(item)))
     }
 
     nextRound() {
