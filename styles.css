@@ -206,9 +206,27 @@ button {
   cursor: pointer;
 }
 
-.container .keyboard .keyboard-row button:active {
+.container .keyboard .keyboard-row button:active, .container .keyboard .keyboard-row button.clicked {
   -webkit-box-shadow: inset 8px 8px 9px -10px black;
           box-shadow: inset 8px 8px 9px -10px black;
   background-color: var(--grey-tone-2);
+}
+
+.container .keyboard .keyboard-row button.not-matched {
+  -webkit-box-shadow: inset 8px 8px 9px -10px black;
+          box-shadow: inset 8px 8px 9px -10px black;
+  background-color: var(--grey-tone-2-5);
+}
+
+.container .keyboard .keyboard-row button.almost-matched {
+  -webkit-box-shadow: inset 8px 8px 9px -10px black;
+          box-shadow: inset 8px 8px 9px -10px black;
+  background-color: var(--orange);
+}
+
+.container .keyboard .keyboard-row button.matched {
+  -webkit-box-shadow: inset 8px 8px 9px -10px black;
+          box-shadow: inset 8px 8px 9px -10px black;
+  background-color: var(--green);
 }
 /*# sourceMappingURL=styles.css.map */

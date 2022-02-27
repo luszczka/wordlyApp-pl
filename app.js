@@ -1,5 +1,5 @@
 const letters = ['a', 'ą', 'b', 'c', 'ć', 'd', 'e', 'ę', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'ł', 'm', 'n', 'ń', 'o', 'ó', 'p', 'r', 's', 'ś', 't', 'q', 'u', 'w', 'v', 'x', 'y', 'z', 'ź', 'ż']
-const words = ['afekt', 'afera', 'agawa', 'ajent', 'akcja', 'akord', 'akryl', 'alert', 'aloes', 'aktor', 'album', 'aleja', 'alkus', 'amant', 'ameba', 'amisz', 'amper', 'angaż', 'anime', 'aneks', 'antyk', 'aorta', 'areał', 'armia', 'astma', 'astra', 'atest', 'atuty', 'audyt', 'awizo', 'awers', "azoty", 'ażury']
+const words = ['afekt', 'afera', 'agawa', 'ajent', 'akcja', 'akord', 'akryl', 'alert', 'aloes', 'aktor', 'album', 'aleja', 'alkus', 'amant', 'ameba', 'amisz', 'amper', 'angaż', 'anime', 'aneks', 'antyk', 'aorta', 'arbuz', 'areał', 'armia', 'astma', 'astra', 'atest', 'audyt', 'awizo', 'awers', "azoty"]
 const TILE_CONTAINER_CLASS = "guess-container";
 const TILE_ROW_CLASS = "guess-row";
 const TILE_CLASS = "guess-tile";
@@ -14,12 +14,12 @@ class Game{
         this.roundsLimit = 6;
         this.typedLetter;
         this.currentRow = this.allRows[this.currentRound-1];
-        this.gameWon = false;
+        this.gameOver = false;
     }
 
     keyboardListener() {        
         document.addEventListener('keydown', (keyPressed) => {
-            if (this.gameWon === true) {
+            if (this.gameOver === true) {
                 if (keyPressed.key == "Enter") {location.reload()}
                 return;
             }
@@ -29,8 +29,31 @@ class Game{
                 return;
             }
             this.typedLetter = keyPressed.key;
+            this.showKeyPressedOnScreen();
             this.passTypedLetterToTile();
         });
+    }
+
+    showKeyPressedOnScreen() {
+        let pressedKey = document.querySelector(`button[data-key="${this.typedLetter}"]`);
+        pressedKey.classList.add("clicked");
+        setTimeout(() => {pressedKey.classList.remove("clicked")}, 200);
+    }
+
+    changeKeyboardKeyColorAfterSubmission(letter, status) {
+        let pressedKey = document.querySelector(`button[data-key="${letter}"]`);
+        if (status == "not-matched") {
+            pressedKey.classList.add("not-matched");
+            return;
+        }
+        if (status == "almostMatched") {
+            pressedKey.classList.add("almost-matched");
+            return;
+        }
+        if (status == "matched") {
+            pressedKey.classList.add("matched");
+            return;
+        }
     }
 
     clickedLetter() {
@@ -38,23 +61,23 @@ class Game{
         let backspaceButton = document.querySelector(`button[data-action="backspace"]`);
         let submitButton = document.querySelector(`button[data-action="submit"]`);
         for (let i = 0; i < keys.length; i++) {
-            keys[i].addEventListener("click",  () => {
-                if (this.gameWon === true) {
+            keys[i].addEventListener("click", () => {
+                if (this.gameOver === true) {
                     return;
                 }
                 this.typedLetter = keys[i].dataset.key;
                 this.passTypedLetterToTile();
             });
         }
-        backspaceButton.addEventListener("click",  () => {
-            if (this.gameWon === true) {
+        backspaceButton.addEventListener("click", () => {
+            if (this.gameOver === true) {
                 return;
             }
             this.backspaceTypedLetter();
         });
     
-        submitButton.addEventListener("click",  () => {
-            if (this.gameWon === true) {
+        submitButton.addEventListener("click", () => {
+            if (this.gameOver === true) {
                 location.reload();
                 return;
             }
@@ -63,7 +86,7 @@ class Game{
     }
 
     passTypedLetterToTile() {
-        if (this.gameWon === true) {
+        if (this.gameOver === true) {
             return;
         }
         for (let j = 0; j < this.lettersLimit; j++) {
@@ -95,7 +118,7 @@ class Game{
     }
 
     checkIfAllTilesInRow() {  
-        if (this.gameWon === true) {
+        if (this.gameOver === true) {
             return;
         }
         this.setAnimation(this.currentRow.children, 'popping', '.5s')
@@ -113,7 +136,6 @@ class Game{
             this.letterMatch();
             setTimeout(() => {this.youWin()}, 300);
             return;
-            
         }
         this.letterMatch();
         this.letterAlmostMatch();
@@ -129,7 +151,7 @@ class Game{
 
     clearAnimation(k) { 
         setTimeout(() => {
-            if (this.gameWon === true) {
+            if (this.gameOver === true) {
                 return;
             }
             this.currentRow.children[k].style = "";
@@ -138,42 +160,46 @@ class Game{
 
     letterMatch() {
         for (let k = 0; k < this.lettersLimit; k++) {
+            this.changeKeyboardKeyColorAfterSubmission(this.currentRow.children[k].attributes.letter.value, "not-matched");
             if (this.currentRow.attributes.letters.value[k] == this.wordToGuess[k]) {
                 if (this.currentRow.children[k].attributes.letter.value == this.wordToGuess[k]) {
                     this.currentRow.children[k].classList.add("match");
-                } 
+                    this.changeKeyboardKeyColorAfterSubmission(this.currentRow.children[k].attributes.letter.value, "matched");
+                }
             }
         }
     }
 
     letterAlmostMatch() {
-        for (let k = 0; k < this.lettersLimit; k++) {
-            if (this.wordToGuess.includes(`${this.currentRow.children[k].attributes.letter.value}`)) {
-                if (this.currentRow.children[k].classList.contains("match") || this.currentRow.children[k].classList.contains("in-word")) {
-                    console.log("already green or orange");
-                } else{
-                    this.currentRow.children[k].classList.add("in-word"); 
-                }
-            } 
-        }
-    }
+        const wordToArray = Array.from(this.currentRow.attributes.letters.value);
+        const wordToGuessToArray = Array.from(this.wordToGuess);
+        const found = wordToArray.filter(letterMatch => wordToGuessToArray.includes(letterMatch));
+        if (!found) {
+            return;
+        } 
+        const counts = {};
+        found.forEach(function (x) { counts[x] = (counts[x] || 0) + 1; });
 
-    // letterAlmostMatch() {
-    //     let wordToArray = Array.from(this.currentRow.attributes.letters.value);
-    //     let wordToGuessToArray = Array.from(this.wordToGuess);
-        // for (let k = 0; k < this.lettersLimit; k++) {
-        //     let found = wordToArray.some(letterMatch => wordToGuessToArray[k].includes(letterMatch));
-        //     if (found) {this.currentRow.children[k].classList.add("in-word"); console.log(this.currentRow.children[k]);console.log("true")}
-        //     wordToArray.shift();
-        // }
-        // for (let k = 0; k < this.lettersLimit; k++) {
-        //     if (wordToArray[k] === wordToGuessToArray){
-        //         console.log(this.currentRow.children[k]);
-        //         console.log("aaa");
-        //     }
-        //     wordToArray.shift();
-        // }
-        // console.log(wordToGuessToArray.some(item => wordToArray.includes(item)))
+        const countsToGuess = {};
+        wordToGuessToArray.forEach(function (x) { countsToGuess[x] = (countsToGuess[x] || 0) + 1; });
+        
+        for (let k = 0; k < this.lettersLimit; k++) {
+            for (let j = 0; j < found.length; j++) {   
+                if (found[j] == null) {
+                    return;
+                }
+                const elementOfFound = found[j];
+                const pushElementOfFound = counts[elementOfFound];
+                const elementOfSearched = countsToGuess[elementOfFound];
+                if (pushElementOfFound > elementOfSearched) {
+                    found.splice(found[j], 1);
+                }
+                if (this.currentRow.children[k].attributes.letter.value == found[j]) {
+                    this.currentRow.children[k].classList.add("in-word");
+                    this.changeKeyboardKeyColorAfterSubmission(this.currentRow.children[k].attributes.letter.value, "almostMatched");
+                }
+            }
+        }
     }
 
     nextRound() {
@@ -186,12 +212,12 @@ class Game{
     }
 
     youWin() {
-        this.gameWon = true;
+        this.gameOver = true;
         alert("Correct!");
     }
 
     youLost() {
-        this.gameWon = true;
+        this.gameOver = true;
         alert("You lost!");
     }
 

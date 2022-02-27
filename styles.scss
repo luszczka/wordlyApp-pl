@@ -122,9 +122,23 @@ button {
                 box-shadow: 9px 10px 9px -10px rgba(0, 0, 0, 1);
                 cursor: pointer;
 
-                &:active {
+                &:active, &.clicked {
                     box-shadow: inset 8px 8px 9px -10px rgba(0, 0, 0, 1);
                     background-color: var(--grey-tone-2);
+                }
+
+                &.not-matched {
+                    box-shadow: inset 8px 8px 9px -10px rgba(0, 0, 0, 1);
+                    background-color: var(--grey-tone-2-5);
+                }
+
+                &.almost-matched {
+                    box-shadow: inset 8px 8px 9px -10px rgba(0, 0, 0, 1);
+                    background-color: var(--orange);
+                }
+                &.matched {
+                    box-shadow: inset 8px 8px 9px -10px rgba(0, 0, 0, 1);
+                    background-color: var(--green);
                 }
             }
         }
