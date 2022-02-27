@@ -12,25 +12,99 @@
 :root {
   --grey-tone-1: #f2f2f2;
   --grey-tone-2: #d7dadc;
+  --grey-tone-2-5: #adadad;
   --grey-tone-3: #4a4a4a;
   --grey-tone-4: #3a3a3c;
   --grey-tone-5: #272729;
   --grey-tone-6: #1a1a1b;
   --orange: #ffa07a;
   --green: #3cb371;
+  --red: #d45858;
 }
 
 body {
   background-color: var(--grey-tone-3);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 button {
   all: unset;
 }
 
+@-webkit-keyframes popping {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  20% {
+    -webkit-transform: rotate(-10deg);
+            transform: rotate(-10deg);
+  }
+  60% {
+    -webkit-transform: rotate(10deg);
+            transform: rotate(10deg);
+  }
+  100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+}
+
+@keyframes popping {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  20% {
+    -webkit-transform: rotate(-10deg);
+            transform: rotate(-10deg);
+  }
+  60% {
+    -webkit-transform: rotate(10deg);
+            transform: rotate(10deg);
+  }
+  100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+}
+
+@-webkit-keyframes colorChange {
+  0% {
+    background-color: var(--grey-tone-4);
+  }
+  30% {
+    background-color: var(--red);
+  }
+  70% {
+    background-color: var(--red);
+  }
+  100% {
+    background-color: var(--grey-tone-4);
+  }
+}
+
+@keyframes colorChange {
+  0% {
+    background-color: var(--grey-tone-4);
+  }
+  30% {
+    background-color: var(--red);
+  }
+  70% {
+    background-color: var(--red);
+  }
+  100% {
+    background-color: var(--grey-tone-4);
+  }
+}
+
 .container {
   width: 90vw;
-  margin: 10em auto;
+  margin: 5em auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -38,6 +112,28 @@ button {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+}
+
+.container .refresh {
+  position: absolute;
+  font-size: 5em;
+  text-align: center;
+  right: 30px;
+  width: 70px;
+  height: 70px;
+  background-color: var(--orange);
+  color: var(--grey-tone-1);
+  border: 3px solid var(--grey-tone-4);
+  cursor: pointer;
+}
+
+.container .refresh:hover {
+  -webkit-animation: popping .5s;
+          animation: popping .5s;
+}
+
+.container .display {
+  display: block;
 }
 
 .container .guess-container {
@@ -72,14 +168,22 @@ button {
       -ms-flex-align: center;
           align-items: center;
   text-transform: uppercase;
+  -webkit-transition: all .4s;
+  transition: all .4s;
 }
 
-.container .guess-container .guess-row .guess-tile .in-word {
+.container .guess-container .guess-row .guess-tile.guessing {
+  background-color: var(--grey-tone-4);
+}
+
+.container .guess-container .guess-row .guess-tile.in-word {
   background-color: var(--orange);
+  border: 3px solid var(--orange);
 }
 
-.container .guess-container .guess-row .guess-tile .match {
+.container .guess-container .guess-row .guess-tile.match {
   background-color: var(--green);
+  border: 3px solid var(--green);
 }
 
 .container .keyboard .keyboard-row {
@@ -102,9 +206,27 @@ button {
   cursor: pointer;
 }
 
-.container .keyboard .keyboard-row button:active {
+.container .keyboard .keyboard-row button:active, .container .keyboard .keyboard-row button.clicked {
   -webkit-box-shadow: inset 8px 8px 9px -10px black;
           box-shadow: inset 8px 8px 9px -10px black;
   background-color: var(--grey-tone-2);
+}
+
+.container .keyboard .keyboard-row button.not-matched {
+  -webkit-box-shadow: inset 8px 8px 9px -10px black;
+          box-shadow: inset 8px 8px 9px -10px black;
+  background-color: var(--grey-tone-2-5);
+}
+
+.container .keyboard .keyboard-row button.almost-matched {
+  -webkit-box-shadow: inset 8px 8px 9px -10px black;
+          box-shadow: inset 8px 8px 9px -10px black;
+  background-color: var(--orange);
+}
+
+.container .keyboard .keyboard-row button.matched {
+  -webkit-box-shadow: inset 8px 8px 9px -10px black;
+          box-shadow: inset 8px 8px 9px -10px black;
+  background-color: var(--green);
 }
 /*# sourceMappingURL=styles.css.map */
